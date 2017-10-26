@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Review Products</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+          <h1 class="text-center">Review Products</h1>
+          <hr/>
+          <br/>
+        </div>
+      </div>
+      <div>
+        Account <label id="loggedAccount"></label> !
+      </div>
+      <div>
+        Your current RateCoin balance: <!-- balance loads here--><label id="balance"></label>
+      </div>
+
+      <div id="productsRow" class="row">
+        <!-- PRODUCTS LOAD HERE -->
+      </div>
+    </div>
+
+    <div id="productTemplate" style="display: none;">
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="panel panel-default panel-product">
+          <div class="panel-heading">
+            <h3 class="panel-title">Scrappy</h3>
+          </div>
+          <div class="panel-body">
+            <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
+            <br/><br/>
+            <strong>UPC</strong>: <span class="product-upc">3</span><br/>
+            <button class="btn btn-default btn-view" type="button" data-toggle="modal" data-target="#viewReviewsModal" data-id="0">View Reviews</button>
+
+            <button class="btn btn-default btn-write" type="button" type="button" data-toggle="modal" data-target="#writeReviewsModal"  data-id="0">Write Review</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- View Reviews Modal -->
+<div id="viewReviewsModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        <h4 class="modal-title">Reviews for <div class="upc">UPC</div> </h4>
+      </div>
+      <div class="modal-body">
+          <div id="reviewsRow" class="row">
+        <!-- Reviews LOAD HERE -->
+        </div>
+             <div id="reviewTemplate" style="display: none;">
+                <label class="reviewer">reviewer</label>
+                <label class="reviewText">Review Text</label>
+               <label class="reviewStars">Review Stars</label>
+              </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+    <!-- Write ReviewsModal -->
+<div id="writeReviewsModal" class="modal fade" role="dialog">
+  <div class="write-modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+            <form id="writeForm">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Write a Review for <label  class="upc" value=""></label> </h4>
+      </div>
+
+      <div class="modal-body">
+
+        * <input name="reviewStars" type="radio" value="1">
+        ** <input  name="reviewStars" type="radio" value="2">
+        *** <input  name="reviewStars" type="radio" value="3">
+        **** <input  name="reviewStars" type="radio" value="4">
+        *****<input  name="reviewStars" type="radio" value="5">
+
+        <input class="reviewText"  type="textarea" rows="5" columns="50" >
+
+      </div>
+      <div class="modal-footer">
+        <button type="button"  btn-default data-dismiss="modal">Close</button>
+        <button type="submit" class="btn-submit-review"  btn-default data-dismiss="modal" >Submit</button>
+
+      </div>
+       </form>
+    </div>
+
+  </div>
+</div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
