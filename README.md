@@ -1,0 +1,2 @@
+# ratecoin
+Distributed Rating Service
