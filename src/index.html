@@ -20,6 +20,9 @@
 
   </head>
   <body>
+  <div>  <br><br>
+  <span id="status"></span>
+  <br></div>
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-push-2">
@@ -28,31 +31,44 @@
           <br/>
         </div>
       </div>
-      <div>
-        Account <label id="loggedAccount"></label> !
-      </div>
-      <div>
-        Your current RateCoin balance: <!-- balance loads here--><label id="balance"></label>
-      </div>
+      <div style="border-radius: 25px;
+    border: 2px solid #73AD21; padding: 20px; ">
+        <div>
+          Logged in Account:  <label id="loggedAccount"></label>
+        </div>
+        <div>
+          Your current RateCoin balance: <!-- balance loads here--><label id="balance"></label>
+        </div>
+        <div>
+          Owner Account: <label id="ownerAccount"></label>
+        </div>
 
+
+
+      </div>
+      <br/>
       <div id="productsRow" class="row">
         <!-- PRODUCTS LOAD HERE -->
       </div>
     </div>
 
     <div id="productTemplate" style="display: none;">
+
       <div class="col-sm-6 col-md-4 col-lg-3">
         <div class="panel panel-default panel-product">
           <div class="panel-heading">
-            <h3 class="panel-title">Scrappy</h3>
+            <h3 class="panel-title">Product</h3>
           </div>
           <div class="panel-body">
-            <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
+            <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="" data-holder-rendered="true">
             <br/><br/>
             <strong>UPC</strong>: <span class="product-upc">3</span><br/>
-            <button class="btn btn-default btn-view" type="button" data-toggle="modal" data-target="#viewReviewsModal" data-id="0">View Reviews</button>
+            <button class="btn btn-default btn-view" type="button" data-toggle="modal"  data-id="0">View Reviews</button>
 
-            <button class="btn btn-default btn-write" type="button" type="button" data-toggle="modal" data-target="#writeReviewsModal"  data-id="0">Write Review</button>
+            <button class="btn btn-default btn-write" type="button" type="button" data-toggle="modal" data-target="#writeReviewsModal"
+                                                                                                                data-id="0">Write Review</button>
+
+
           </div>
         </div>
       </div>
@@ -69,15 +85,24 @@
 
         <h4 class="modal-title">Reviews for <div class="upc">UPC</div> </h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style=" margin-left:25px; margin-right:25px">
           <div id="reviewsRow" class="row">
         <!-- Reviews LOAD HERE -->
         </div>
-             <div id="reviewTemplate" style="display: none;">
-                <label class="reviewer">reviewer</label>
-                <label class="reviewText">Review Text</label>
-               <label class="reviewStars">Review Stars</label>
-              </div>
+
+        <div id="reviewTemplate" style="display: none;">
+
+               <div>Stars: <span class="reviewStars" >Stars</span>  <button class="btn btn-default btn-pay" style="float:right" type="button"  data-id="0">Pay for Review</button>
+</div>
+               <div>Account: <label class="reviewer">reviewer</label></div>
+               <div>Review: <label class="reviewText">Review Text</label></div>
+          <button type="submit" class="btn-submit-like" data-id="0" btn-default >Like</button>
+          <div style="float:right" > No. of likes <span class="noOfLikes"></span></div>
+
+
+
+
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -86,12 +111,13 @@
 
   </div>
 </div>
+</div>
 
 
 
     <!-- Write ReviewsModal -->
 <div id="writeReviewsModal" class="modal fade" role="dialog">
-  <div class="write-modal-dialog">
+  <div class="modal-dialog">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -102,14 +128,14 @@
       </div>
 
       <div class="modal-body">
-
-        * <input name="reviewStars" type="radio" value="1">
+        <div><label>How many stars would you like to give? </label></div>
+        <font size="12"><label style="vertical-align:middle;" >*</label> <input style="vertical-align:middle;" name="reviewStars" type="radio" value="1">
         ** <input  name="reviewStars" type="radio" value="2">
         *** <input  name="reviewStars" type="radio" value="3">
         **** <input  name="reviewStars" type="radio" value="4">
-        *****<input  name="reviewStars" type="radio" value="5">
-
-        <input class="reviewText"  type="textarea" rows="5" columns="50" >
+        *****<input  name="reviewStars" type="radio" value="5"></font>
+        <div><label>Give a brief text review</label></div>
+        <div><textarea class="reviewText"  type="textarea" rows="5" cols="75" ></textarea></div>
 
       </div>
       <div class="modal-footer">
