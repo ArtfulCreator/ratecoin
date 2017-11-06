@@ -10,7 +10,10 @@ var RateCoin = contract(ratecoin_artifacts);
 var RatingContract = contract(ratingcontract_artifacts);
 
 var accounts;
+//Owner account
 var account;
+
+var ownerAccount;
 
 window.App = {
   web3Provider: null,
@@ -33,11 +36,12 @@ window.App = {
         productTemplate.find('.product-upc').text(data[i].upc);
         productTemplate.find('.btn-view').attr('data-id', data[i].upc);
         productTemplate.find('.btn-write').attr('data-id',data[i].upc);
+
         productsRow.append(productTemplate.html());
       }
     });
 
-    return App.initWeb3();
+    App.initWeb3();
   },
 
   initWeb3: function() {
@@ -75,13 +79,29 @@ window.App = {
         return;
       }
 
-      accounts = accs;
-      account = accounts[0];
+     accounts = accs;
+     account = accounts[0];
 
-      self.refreshBalance();
-      self.displayLoggedAccount();
+        var meta;
+        RateCoin.deployed().then(function(instance) {
+          meta = instance;
+
+
+            var output1 = [];
+            output1.push(meta.getOwnerAccount.call());
+
+            var myPromises = output1;
+
+            Promise.all(myPromises).then(function(data) {
+                ownerAccount = data[0];
+                self.refreshBalance();
+                self.displayLoggedAccount();
+            });
+
+        });
+
+
     });
-
 
     return App.bindEvents();
   },
@@ -90,11 +110,16 @@ window.App = {
     $(document).on('click', '.btn-view', App.getReviews);
     $(document).on('click', '.btn-write', App.sendUPCToDialog);
     $(document).on('click', '.btn-submit-review', App.writeReview);
+    $(document).on('click', '.btn-submit-like', App.likeReview);
+    $(document).on('click', '.btn-pay', App.payForReview);
   },
 
   displayLoggedAccount: function () {
     var loggedAccountLabel = document.getElementById("loggedAccount");
+    var ownerAccountLabel = document.getElementById("ownerAccount");
     loggedAccountLabel.innerHTML = account.valueOf();
+    ownerAccountLabel.innerHTML = ownerAccount.valueOf();
+
   },
 
   setStatus: function(message) {
@@ -118,26 +143,42 @@ window.App = {
     });
   },
 
-  sendCoin: function() {
+  sendCoin: function(receiver, amount) {
     var self = this;
-
-    var amount = parseInt(document.getElementById("amount").value);
-    var receiver = document.getElementById("receiver").value;
 
     this.setStatus("Initiating transaction... (please wait)");
 
     var meta;
     RateCoin.deployed().then(function(instance) {
       meta = instance;
-      return meta.sendCoin(receiver, amount, {from: account});
+
+      return meta.sendCoin(receiver, amount, {from: ownerAccount});
     }).then(function() {
       self.setStatus("Transaction complete!");
+
       self.refreshBalance();
     }).catch(function(e) {
       console.log(e);
       self.setStatus("Error sending coin; see log.");
     });
   },
+
+  payForReview:function(){
+
+  event.preventDefault();
+
+    var reviewDialog = $('#viewReviewsModal');
+    var reviewTemplate = $('#reviewTemplate');
+    var upc =  reviewDialog.find(".upc").text();
+
+    //get the pay button id
+    var reviewID = $(this).data('id');
+
+    var reviewer =  reviewTemplate.find(".reviewer").text();
+
+    App.sendCoin(reviewer, 100);
+  },
+
 
   sendUPCToDialog: function(){
     event.preventDefault();
@@ -162,7 +203,7 @@ window.App = {
 
   },
 
-  getReviews: function(upc) {
+  getReviews: function() {
       event.preventDefault();
     var upc =  $(this).attr("data-id");
     var ratingInstance;
@@ -184,42 +225,63 @@ window.App = {
 
    })},
 
-   displayReviews: function (noOfReviews, upc, ratingInstance) {
+  displayReviews: function (noOfReviews, upc, ratingInstance) {
 
 
+
+        var reviewDialogTemplate = $('#viewReviewsModal');
+
+        reviewDialogTemplate.find('.upc').text(upc);
 
         var reviewsRow = $('#reviewsRow');
+        reviewsRow.empty();
         var reviewTemplate = $('#reviewTemplate');
 
-        reviewsRow.empty();
 
 
-      for (var i = 0; i < noOfReviews; i++) {
+          for (var i = 0; i < noOfReviews; i++) {
 
-       var reviewsRow = $('#reviewsRow');
-          var reviewTemplate = $('#reviewTemplate');
+                /**
+                    Below code is required to compile multiple asynchronous Promise calls and make sure they all complete before we load the DOM
+                */
 
-
-            ratingInstance.getReviewStars.call(upc,i).then(function (reviewStars) {
-                reviewTemplate.find('.reviewStars').text(reviewStars);
-            });
-
-          ratingInstance.getReviewText.call(upc,i).then(function(reviewText) {
-            reviewTemplate.find('.reviewText').text(reviewText);
-          });
-
-            ratingInstance.getReviewer.call(upc,i).then(function (reviewer) {
-                reviewTemplate.find('.reviewer').text(reviewer);
-            });
+                var output1 = [];
+                output1.push(ratingInstance.getReviewStars.call(upc,i));
+                output1.push(ratingInstance.getReviewText.call(upc,i));
+                output1.push(ratingInstance.getReviewer.call(upc,i));
+                output1.push(ratingInstance.getNumberOfLikes.call(upc,i));
+                output1.push(i);
 
 
+                var myPromises = output1;
 
-            reviewsRow.append(reviewTemplate.html());
-      }
+                Promise.all(myPromises).then(function(data) {
 
+                        var reviewStarsElem = reviewTemplate.find('.reviewStars');
+
+                        var length = parseInt(data[0])+1;
+
+                        var x=Array(length).join("*");
+
+                        reviewStarsElem.text(x);
+
+                      reviewTemplate.find('.reviewText').text(data[1]);
+                      reviewTemplate.find('.reviewer').text(data[2]);
+                      reviewTemplate.find('.noOfLikes').text(data[3]);
+                      //set the like button id
+                      reviewTemplate.find(".btn-submit-like").attr('data-id',data[4]);
+                      if(ownerAccount!=account) {
+                        reviewTemplate.find('.btn-pay')[0].style.visibility= "hidden";
+                      }
+                      reviewsRow.append(reviewTemplate.html());
+                });
+
+          }
+
+
+        $('#viewReviewsModal').modal('show');
 
    },
-
 
 
 
@@ -250,7 +312,7 @@ window.App = {
 
             }
             else{
-                alert("Review already present");
+                alert("You have already submitted a review for this Product.");
             }
           });
 
@@ -259,7 +321,43 @@ window.App = {
           console.log(err);
         });
 
+  },
 
+
+  likeReview: function() {
+
+        event.preventDefault();
+
+        var reviewDialog = $('#viewReviewsModal');
+        var reviewTemplate = $('#reviewTemplate');
+        var upc =  reviewDialog.find(".upc").text();
+
+        //get the like button id
+        var reviewID = $(this).data('id');
+        RatingContract.deployed().then(function(instance) {
+          var ratingInstance = instance;
+
+            //Reject if user already liked this review
+          ratingInstance.isLikePresent.call(upc, reviewID, account).then(function(isLikePresent) {
+
+
+            if(!isLikePresent) {
+
+
+                ratingInstance.addLike(upc, reviewID, {from:account,gas: 200000}).then(function(success) {console.log(success);});
+
+                document.getElementById("viewReviewsModal").reload();
+            }
+            else{
+               alert("You have already liked this review.");
+
+            }
+          });
+
+
+        }).catch(function(err) {
+          console.log(err);
+        });
 
   },
 
