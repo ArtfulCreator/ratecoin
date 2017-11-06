@@ -17,6 +17,10 @@ contract RateCoin {
 		balances[tx.origin] = 10000;
 	}
 
+	function getOwnerAccount () returns (address owner) {
+		owner = tx.origin;
+	}
+
 	function sendCoin(address receiver, uint amount) returns(bool sufficient) {
 		if (balances[msg.sender] < amount) return false;
 		balances[msg.sender] -= amount;
